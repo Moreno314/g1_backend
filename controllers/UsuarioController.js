@@ -58,24 +58,32 @@ const login_usuario = async function (req, res) {
 
 const listar_usuarios_filtro_admin = async function (req, res) {
 
-    let tipo = req.params['tipo'];
-    let filtro = req.params['filtro'];
+    console.log(req.user);
+    if (req.user) {
+        if (req.user.role == 'admin') {
+            let tipo = req.params['tipo'];
+            let filtro = req.params['filtro'];
 
-    console.log(tipo);
 
-    if (tipo == null || tipo == 'null') {
-        let reg = await Usuario.find();
-        res.status(200).send({ data: reg });
-    } else {
-        if (tipo == 'apellidos') {
-            let reg = await Usuario.find({ apellidos: new RegExp(filtro, 'i') });
-            res.status(200).send({ data: reg });
+            if (tipo == null || tipo == 'null') {
+                let reg = await Usuario.find();
+                res.status(200).send({ data: reg });
+            } else {
+                if (tipo == 'apellidos') {
+                    let reg = await Usuario.find({ apellidos: new RegExp(filtro, 'i') });
+                    res.status(200).send({ data: reg });
 
-        } else if (tipo == 'correo') {
-            let reg = await Usuario.find({ email: new RegExp(filtro, 'i') });
-            res.status(200).send({ data: reg });
+                } else if (tipo == 'correo') {
+                    let reg = await Usuario.find({ email: new RegExp(filtro, 'i') });
+                    res.status(200).send({ data: reg });
 
+                }
+            }
+        } else {
+            res.status(500).send({ message: 'NoAcceso' });
         }
+    } else {
+        res.status(500).send({ message: 'NoAcceso' });
     }
 
 }
